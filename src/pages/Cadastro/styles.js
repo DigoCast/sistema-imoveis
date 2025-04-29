@@ -20,7 +20,7 @@ export const ContainerForm = styled.div`
     border-radius: 5px;
     background-color: var(--white);
 `
-export const Form = styled.div`
+export const Form = styled.form`
     width: 100%;
 `
 export const Label = styled.div`
