@@ -1,12 +1,14 @@
 import React from 'react'
 import { Container, Text } from './styles'
+import { urlApi } from '../../services/Api';
 
-const TopBanner = () => {
+const TopBanner = ({ tipo, descricao, thumb}) => {
+  const imgUrl = `${urlApi}/uploads/${thumb}`;
   return (
-    <Container>
+    <Container style={{backgroundImage: `url(${imgUrl})`}}>
         <Text>
-            <h2>Apartamentos</h2>
-            <p>Lorem ipsum dolor sit amet consectetur, adipisicing elit. Consequuntur quia adipisci unde et esse quam sit eligendi at pro </p>
+            <h2>{tipo}</h2>
+            <p>{descricao}</p>
         </Text>
     </Container>
   )

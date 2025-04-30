@@ -3,22 +3,24 @@ import Input from "../../components/Input";
 import Button from "../../components/Button";
 import { Container, ContainerForm, Divisor, Form, Label } from "./styles";
 import { Link } from "react-router-dom";
+import { AppAuth } from "../../context/AppAuth";
 
 const Login = () => {
+  const auth = AppAuth();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
-  const handleSubmit = (e) => {
+
+  const handleLogin = async (e) => {
     e.preventDefault();
-    console.log({
-      email, password
-    })
+    await auth.authenticate(email, password);
   }
+  
   return (
     <Container>
       <h2>Acesse a sua conta</h2>
       <p>Entre com seu email e senha</p>
       <ContainerForm>
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={handleLogin}>
           <Label>Email</Label>
           <Input
             type="text"

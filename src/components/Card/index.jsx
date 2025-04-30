@@ -2,24 +2,22 @@ import React from "react";
 import { Container, Description, Img, Itens } from "./styles";
 import { FaArrowRight, FaMapMarkerAlt } from "react-icons/fa";
 import { Link } from "react-router-dom";
+import { urlApi } from "../../services/Api";
 
-const Card = () => {
+const Card = ({thumb, tipo, endereco, valor, slug}) => {
   return (
     <Container>
-        <Link to="/imovel" style={{ textDecoration: 'none' }}>
+        <Link to={`/imovel/${slug}`} style={{ textDecoration: 'none' }}>
         <Img>
-          <img
-            src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80"
-            alt=""
-          />
+          <img src={`${urlApi}/uploads/${thumb}`} alt=""/>
         </Img>
         <Description>
-          <h4>Apartamento</h4>
+          <h4>{tipo}</h4>
           <Itens>
             <span>
-              <FaMapMarkerAlt /> Jardim Satélite, São José dos Campos
+              <FaMapMarkerAlt /> {endereco}
             </span>
-            <span>R$ 1.900,00 / mês</span>
+            <span>R$ {valor} / mês</span>
           </Itens>
           Detalhes <FaArrowRight />
         </Description>

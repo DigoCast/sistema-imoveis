@@ -1,30 +1,78 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import Input from  "../../components/Input"
 import TextArea from "../../components/TextArea"
 import Button from "../../components/Button"
+import Api, { urlApi } from "../../services/Api"
 import { Container, Description, Left, Profile, ProfileContact, ProfileDescription, ProfileFormContact, ProfileImg, Right, Thumb } from "./styles";
 import TopBanner from "../../components/TopBanner";
+import { useParams } from "react-router-dom/cjs/react-router-dom.min";
+import { toast } from "react-toastify";
 
 const Imobi = () => {
+  const {slug} = useParams();
+  const [dataImobi, setDataImobi] = useState([]);
+
+  useEffect(() => {
+    Api.get(`/listimobi/${slug}`)
+      .then((res) => {
+        setDataImobi(res.data)
+      })
+      .catch(() => {
+        console.log("Erro: Erro ao listar imóvel")
+      })
+  }, [slug])
+
+  const {
+    tipo,
+    cidade,
+    endereco,
+    descricao,
+    thumb,
+    name,
+    email,
+    telefone,
+    userId
+  } = dataImobi;
+
+  const [client_name, setClientName] = useState('')
+  const [client_email, setClientEmail] = useState('')
+  const [client_mensagem, setClientMessage] = useState('')
+
+  const dataMessage = {
+    client_name,
+    client_email,
+    client_mensagem,
+    userId
+  }
+
+  const handleSubmit = (e) => {
+    e.preventDefault(); // anula o comportamento comum de um form
+    Api.post('/createmessage', dataMessage)
+    .then((res) => {
+      if(!res.data.error === true){
+        toast(res.data.message);
+      }else{
+        toast(res.data.message);
+      }
+    })
+    .catch(() => {
+      console.log("Erro: Erro no sistema")
+    })
+  }
+
   return (
     <Fragment>
-      <TopBanner />
+      <TopBanner tipo={tipo} descricao={descricao} thumb={thumb} />
       <Container>
         <Left>
           <Thumb>
-            <img
-              src="https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1470&q=80"
-              alt=""
-            />
+            <img src={`${urlApi}/uploads/${thumb}`}/>
           </Thumb>
           <Description>
-            <h2>Apartamento / Alugar</h2>
-            <p>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Fugit
-              commodi dolor ipsam autem aliquid, minus aperiam consequatur
-              inventore nam alias illum eum assumenda libero? Vel consectetur
-              consequuntur non at laborum!
-            </p>
+            <h2>{tipo}</h2>
+            <h5>Cidade: {cidade}</h5>
+            <h5>Endereço: {endereco}</h5>
+            <p>{descricao}</p>
           </Description>
         </Left>
         <Right>
@@ -33,21 +81,40 @@ const Imobi = () => {
               <img src="https://images.unsplash.com/placeholder-avatars/extra-large.jpg?dpr=1&auto=format&fit=crop&w=150&h=150&q=60&crop=faces&bg=fff" alt="" />
             </ProfileImg>
             <ProfileDescription>
-              <h3>Diego Castilho</h3>
+              <h3>{name}</h3>
               <p>Descrição do Usuário</p>
             </ProfileDescription>
           </Profile>
           <ProfileContact>
               <h3>Informações para Contato:</h3>
-              <p>(12) 1232-2131</p>
-              <p>diego@gmail.com</p>
+              <p>{telefone}</p>
+              <p>{email}</p>
           </ProfileContact>
           <ProfileFormContact>
             <h3>Contate o Anunciante</h3>
-            <form action="">
-              <Input type="text" placeholder="Nome:"/>
-              <Input type="text" placeholder="Email:"/>
-              <TextArea placeholder="Mensagem: "></TextArea>
+            <form onSubmit={handleSubmit} autoComplete="off">
+              <Input 
+                type="hidden" 
+                name="userId"
+                value={userId ?? ''}
+              />
+              <Input 
+                type="text" 
+                placeholder="Nome:"
+                name="client_name"
+                onChange={(e) => setClientName(e.target.value)}
+              />
+              <Input 
+                type="text" 
+                placeholder="Email:"
+                name="client_email"
+                onChange={(e) => setClientEmail(e.target.value)}
+              />
+              <TextArea 
+                placeholder="Mensagem:"
+                name="client_mensagem"
+                onChange={(e) => setClientMessage(e.target.value)}
+              ></TextArea>
               <Button>Enviar Mensagem</Button>
             </form>
           </ProfileFormContact>
